@@ -11,22 +11,35 @@ namespace Dream.frame.$Facade {
     class Facade implements IObserver {
         private _msg = new MessageCenter();
         private _modelMap = new Map<IModelClass, BaseModel>();
+        private _serverMap = new Map<IServerClass, BaseServer>();
 
         getModel<T extends BaseModel>(key: new() => T): T {
-            let out = this._modelMap.get(key);
+            let map = this._modelMap;
+            let out = map.get(key);
             if (!out) {
                 out = new key();
-                this._modelMap.set(key, out);
+                map.set(key, out);
             }
             return <any>out;
         }
 
         delModel(key: IModelClass) {
-            let model = this._modelMap.get(key);
+            let map = this._modelMap;
+            let model = map.get(key);
             if (model) {
-                this._modelMap.delete(key);
+                map.delete(key);
                 model.dispose();
             }
+        }
+
+        getServer<T extends BaseServer>(key: new() => T): T {
+            let map = this._serverMap;
+            let out = map.get(key);
+            if (!out) {
+                out = new key();
+                map.set(key, out);
+            }
+            return <any>out;
         }
 
         care<T>(msgName: string, action: (msg: Message<T>) => void, thisObj?: any, dataJudge?: (data: T) => boolean, once?: boolean, priority?: number) {

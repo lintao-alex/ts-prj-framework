@@ -1,6 +1,7 @@
 {
     "extends": "../share/tsconfig-base.json",
     "include": [
+        "../share/libs",
         "../common/src",
         "src"
     ]

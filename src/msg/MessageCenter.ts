@@ -5,7 +5,6 @@
 
 namespace Dream.frame {
     import ObjectPool = Dream.common.ObjectPool;
-    import ArrayUtils = Dream.common.ArrayUtils;
 
     export class MessageCenter implements IObserver{
         private _reactionMap = new Map<string, Reaction<any>[]>();
@@ -51,7 +50,7 @@ namespace Dream.frame {
             if (reactList) {
                 //移除的时候不必考虑列表浅复制
                 for (let i = reactList.length - 1; i >= 0; --i) {
-                    let react = reactList[i]
+                    let react = reactList[i];
                     if (this.isSameReaction(action, thisObj, react)) {
                         reactList.splice(i, 1);
                         this.onRemoveReact(msgName, react, reactList);
@@ -92,7 +91,7 @@ namespace Dream.frame {
                     let react = copyList[i];
                     if (react.judgeData(data)) {
                         react.doAction(msg);
-                        if (react.once && ArrayUtils.remove(reactList, react)) {//自动移除单次回调,这里考虑了回调中触发移除的可能
+                        if (react.once && common.ArrayUtils.remove(reactList, react)) {//自动移除单次回调,这里考虑了回调中触发移除的可能
                             this.onRemoveReact(msgName, react, reactList);
                         }
                     }
@@ -103,7 +102,7 @@ namespace Dream.frame {
 
         private onRemoveReact(msgName: string, react: Reaction<any>, reactList: Reaction<any>[]) {
             this.clearReact(react);
-            if (!reactList[0]) {//第一位都没有了，说明列表已清空
+            if (common.ArrayUtils.isEmpty(reactList)) {//第一位都没有了，说明列表已清空
                 this._reactionMap.delete(msgName);
             }
         }
