@@ -1,3 +1,4 @@
+///<reference path="ProxyObserver.ts"/>
 /**
  * Created by lintao_alex on 2019/6/14
  */

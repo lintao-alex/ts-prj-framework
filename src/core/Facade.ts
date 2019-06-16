@@ -5,7 +5,7 @@
 
 namespace Dream.frame.$Facade {
     export function getIns() {
-        return _ins
+        return _ins || (_ins = new Facade());
     }
 
     class Facade implements IObserver {
@@ -54,6 +54,5 @@ namespace Dream.frame.$Facade {
             this._msg.sendMessage(msgName, data);
         }
     }
-
-    let _ins = new Facade();
+    let _ins: Facade;
 }

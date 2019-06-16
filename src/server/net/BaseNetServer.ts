@@ -240,7 +240,7 @@ namespace Dream.frame {
         actionResult: number;
         msg: string;
     }
-    interface IProtoClass{
+    export interface IProtoClass{
         encode(message: any, writer?: protobuf.Writer): protobuf.Writer;
         decode(reader: (protobuf.Reader|Uint8Array), length?: number): any;
     }
