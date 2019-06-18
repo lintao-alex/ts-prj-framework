@@ -85,15 +85,19 @@ namespace Dream.frame {
                 let msg = ObjectPool.getObj(Message);
                 msg.data = data;
                 msg.name = msgName;
-                //发送引起的回调中可能引起列表的变化，所以对副本进遍历
-                let copyList = reactList.concat();
+                //发送引起的回调中可能引起列表的变化，所以生成一个副本来处理。这里不使用concat，因为copyList的length可能会比reactList小
+                let copyList: Reaction<any>[] = [];
+                for (let i = 0, len = reactList.length; i < len; ++i) {
+                    let react = reactList[i];
+                    if (react.judgeData(data)) {
+                        copyList.push(react);
+                    }
+                }
                 for (let i = 0, len = copyList.length; i < len; ++i) {
                     let react = copyList[i];
-                    if (react.judgeData(data)) {
-                        react.doAction(msg);
-                        if (react.once && common.ArrayUtils.remove(reactList, react)) {//自动移除单次回调,这里考虑了回调中触发移除的可能
-                            this.onRemoveReact(msgName, react, reactList);
-                        }
+                    react.doAction(msg);
+                    if (react.once && common.ArrayUtils.remove(reactList, react)) {//自动移除单次回调,这里考虑了回调中触发移除的可能
+                        this.onRemoveReact(msgName, react, reactList);
                     }
                 }
                 ObjectPool.recycleObj(msg);
