@@ -4,15 +4,15 @@
 namespace Dream.frame {
     export abstract class ProxyObserver implements IObserver {
         care<T>(msgName: string, action: (msg: Message<T>) => void, thisObj?: any, dataJudge?: (data: T) => boolean, once?: boolean, priority?: number) {
-            $Facade.getIns().care(msgName, action, thisObj, dataJudge, once, priority);
+            $internal.getMsg().care(msgName, action, thisObj, dataJudge, once, priority);
         }
 
         abandon(msgName: string, action: (msg: Message<any>) => void, thisObj: any) {
-            $Facade.getIns().abandon(msgName, action, thisObj);
+            $internal.getMsg().abandon(msgName, action, thisObj);
         }
 
         sendMessage(msgName: string, data: any) {
-            $Facade.getIns().sendMessage(msgName, data);
+            $internal.getMsg().sendMessage(msgName, data);
         }
     }
 }
