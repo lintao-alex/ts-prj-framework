@@ -10,5 +10,9 @@ namespace Dream.frame {
         protected getServer<T extends BaseServer>(serverClass: new() => T): T {
             return $internal.ServerCenter.Ins.getServer(serverClass);
         }
+
+        protected msg(){
+            return $internal.getMsg();
+        }
     }
 }

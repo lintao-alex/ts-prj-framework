@@ -4,7 +4,7 @@
 namespace Dream.frame {
     export enum UILayer {
         scene,
-        ui,
-        uiPop
+        ui,//互斥
+        uiPop//可叠加
     }
 }
