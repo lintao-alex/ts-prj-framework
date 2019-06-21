@@ -31,6 +31,14 @@ namespace Dream.frame {
             ObjectPool.recycleObj(obj);
         }
 
+        // protected getModel<T extends BaseModel>(modelClass: new() => T): T {
+        //     return $internal.ModelCenter.Ins.getModel(modelClass)
+        // }
+        //
+        // protected getServer<T extends BaseServer>(serverClass: new() => T): T {
+        //     return $internal.ServerCenter.Ins.getServer(serverClass)
+        // }
+
         dispose(): void {
         }
     }

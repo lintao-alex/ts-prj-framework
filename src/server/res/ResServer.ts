@@ -17,5 +17,9 @@ namespace Dream.frame {
         getRes(key: string) {
             return RES.getRes(key);
         }
+
+        getResAsync(key: string) {
+            return RES.getResAsync(key) as Promise<any>
+        }
     }
 }

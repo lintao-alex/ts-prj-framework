@@ -2,17 +2,13 @@
  * Created by lintao_alex on 2019/6/18
  */
 namespace Dream.frame {
-    export abstract class BaseGameInit {
+    export abstract class BaseGameInit extends ProxyObserver{
         protected getModel<T extends BaseModel>(modelClass: new() => T): T {
             return $internal.ModelCenter.Ins.getModel(modelClass);
         }
 
         protected getServer<T extends BaseServer>(serverClass: new() => T): T {
             return $internal.ServerCenter.Ins.getServer(serverClass);
-        }
-
-        protected msg(){
-            return $internal.getMsg();
         }
     }
 }

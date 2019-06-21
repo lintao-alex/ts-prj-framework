@@ -1,12 +1,11 @@
 /**
  * Created by lintao_alex on 2019/6/12
+ * @internal
  */
-
-
 namespace Dream.frame {
     import ObjectPool = Dream.common.ObjectPool;
 
-    export class MessageCenter implements IObserver{
+    export class MessageCenter implements IObserver {
         private _reactionMap = new Map<string, Reaction<any>[]>();
 
         /**
@@ -171,14 +170,14 @@ namespace Dream.frame {
         }
 
         judgeData(data: T) {
-            if(this._hasClear) return false;
+            if (this._hasClear) return false;
             let judgeFuc = this.dataJudge;
             if (judgeFuc) return judgeFuc.call(this.thisObj, data);
             return true;
         }
 
         doAction(msg: Message<T>) {
-            if(this._hasClear) return;
+            if (this._hasClear) return;
             this.action.call(this.thisObj, msg);
         }
     }
