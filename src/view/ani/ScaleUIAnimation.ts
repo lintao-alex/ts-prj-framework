@@ -9,7 +9,7 @@ namespace Dream.frame {
             let view = this._view;
             view.scaleX = 0;
             view.scaleY = 0;
-            egret.Tween.get(view).to({ scaleX: 1, scaleY: 1 }, 2000, egret.Ease.quadOut).call(cmpCall, thisObj);
+            egret.Tween.get(view).to({ scaleX: 1, scaleY: 1 }, 500, egret.Ease.quadOut).call(cmpCall, thisObj);
         }
     }
 }

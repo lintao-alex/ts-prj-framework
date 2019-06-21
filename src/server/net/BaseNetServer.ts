@@ -14,21 +14,24 @@ namespace Dream.frame {
     export abstract class BaseNetServer extends BaseServer {
         private readonly LOG_MARK = '[socket] ';
         private _socket: egret.WebSocket;
-        private _onConnectCall: Function;
-        private _onConnectObj: any;
+        private _onConnectCall: () => void;
 
         private _pushCallMap = new Map<string, Array<BackCall<Function>>>();
         private _readyPkgList: NetCallNode[];
         private _pendingPkgList: NetCallNode[];
         private _responseReader: NetResponseReader;
 
-        public sendRequest(command: string, param?: IRequestParam): INetCall {
-            let node: NetCallNode = ObjectPool.getObj(NetCallNode);
+        public sendRequest(command: string, param?: IRequestParam) {
+            let node = ObjectPool.getObj(NetCallNode);
             node.command = command;
-            node.reset(param);
+            node.param = param;
+            let out = new Promise<INetResolve>((resolve, reject) => {
+                node.resolve = resolve;
+                node.reject = reject;
+            })
             this._readyPkgList.push(node);
             this.readyToSendPkg();
-            return node;
+            return out;
         }
 
         public registerPush<T extends IPushData>(command: string, callFuc: (data: T) => void, callObj: any) {
@@ -67,9 +70,7 @@ namespace Dream.frame {
             }
         }
 
-        public init(host: string, port: number, onConnectCall: Function, onConnectObj: any) {
-            this._onConnectCall = onConnectCall;
-            this._onConnectObj = onConnectObj;
+        $init(host: string, port: number) {
             this._readyPkgList = [];
             this._pendingPkgList = [];
 
@@ -87,6 +88,10 @@ namespace Dream.frame {
             reader.callObj = this;
             reader.dealResponse = this.dealResponse;
             this._responseReader = reader;
+            return new Promise<any>((resolve, reject) => {
+                this._onConnectCall = resolve;
+                //todo connectErr
+            })
         }
 
         private readyToSendPkg() {
@@ -194,7 +199,7 @@ namespace Dream.frame {
             if (this._onConnectCall) {
                 let tempCall = this._onConnectCall;
                 this._onConnectCall = null;
-                tempCall.apply(this._onConnectObj);
+                tempCall();
             }
             this.startHeartBeat();
         }
@@ -223,7 +228,7 @@ namespace Dream.frame {
 
         protected abstract decodeCommonResponse(reader: Uint8Array): IResponseData
 
-        protected stringifyProto(response: any): string{
+        protected stringifyProto(response: any): string {
             return '';
         }
 
@@ -236,12 +241,16 @@ namespace Dream.frame {
         }
     }
 
-    export interface IResponseData{
+    export interface IResponseData {
         actionResult: number;
         msg: string;
+
+        [propName: string]: any;
     }
-    export interface IProtoClass{
+
+    export interface IProtoClass {
         encode(message: any, writer?: protobuf.Writer): protobuf.Writer;
-        decode(reader: (protobuf.Reader|Uint8Array), length?: number): any;
+
+        decode(reader: (protobuf.Reader | Uint8Array), length?: number): any;
     }
 }

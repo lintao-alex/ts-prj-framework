@@ -5,7 +5,7 @@
 
 namespace Dream.frame {
     export abstract class BaseModel extends ProxyObserver implements common.IDispose {
-        abstract dispose(): void;
+        dispose(): void {}
         protected getServer<T extends BaseServer>(key: new() => T): T {
             return $internal.ServerCenter.Ins.getServer(key);
         }
