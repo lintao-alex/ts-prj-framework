@@ -17,15 +17,15 @@ namespace Dream.frame {
         private _onConnectCall: () => void;
 
         private _pushCallMap = new Map<string, Array<BackCall<Function>>>();
-        private _readyPkgList: NetCallNode[];
-        private _pendingPkgList: NetCallNode[];
+        private _readyPkgList: NetCallNode<any>[];
+        private _pendingPkgList: NetCallNode<any>[];
         private _responseReader: NetResponseReader;
 
-        public sendRequest(command: string, param?: IRequestParam) {
-            let node = ObjectPool.getObj(NetCallNode);
+        public sendRequest<T>(command: string, param?: IRequestParam) {
+            let node: NetCallNode<T> = ObjectPool.getObj(NetCallNode);
             node.command = command;
             node.param = param;
-            let out = new Promise<INetResolve>((resolve, reject) => {
+            let out = new Promise<INetResolve<T>>((resolve, reject) => {
                 node.resolve = resolve;
                 node.reject = reject;
             })
@@ -108,7 +108,7 @@ namespace Dream.frame {
             }
         }
 
-        private sendPackage(node: NetCallNode) {
+        private sendPackage(node: NetCallNode<any>) {
             let collect = new ByteArray();
             collect.endian = egret.Endian.BIG_ENDIAN;
             collect.writeUTFBytes(node.command);

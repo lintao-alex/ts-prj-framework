@@ -8,27 +8,27 @@ namespace Dream.frame {
         catch(onRejected: (reason: any, param?: IRequestParam) => void, thisObj?: any);
     }
 
-    export interface INetResolve {
-        response: IResponseData;
+    export interface INetResolve<T> {
+        response: T;
         param: IRequestParam;
     }
 
     /**
      * @internal
      */
-    export class NetCallNode {
+    export class NetCallNode<T> {
         private static _CREATE_CNT = 0;
         readonly id: number;
         command: string;
         param: IRequestParam;
-        resolve: (value?: INetResolve) => void;
+        resolve: (value?: INetResolve<T>) => void;
         reject: (reason?: any) => void;
 
         constructor() {
             this.id = ++NetCallNode._CREATE_CNT;
         }
 
-        invokeResponse(response: IResponseData) {
+        invokeResponse(response: T) {
             this.resolve({ response, param: this.param });
         }
 
