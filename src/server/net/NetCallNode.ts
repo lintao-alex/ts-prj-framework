@@ -2,12 +2,7 @@
  * Created by lintao_alex on 2017/9/19.
  */
 namespace Dream.frame {
-    export interface INetCall {
-        then(onFulfilled: (value: IResponseData, param?: IRequestParam) => void, thisObj?: any, onRejected?: (reason: any, param?: IRequestParam) => void);
-
-        catch(onRejected: (reason: any, param?: IRequestParam) => void, thisObj?: any);
-    }
-
+    //todo object pool
     export interface INetResolve<T> {
         response: T;
         param: IRequestParam;
