@@ -4,11 +4,13 @@
  */
 namespace Dream.frame {
     export class BaseUI<T extends UIViewType> extends BaseUIArea<T> {
+        protected _modelList: IModelClass[];
+
         open() {
             this.beforeShow();
             let ani = this.getObj(this.openAniClass);
             ani.reset(this.view);
-            ani.start(this.onShown, this);
+            ani.start(this.afterShow, this);
             this.recycleObj(ani);
         }
 
@@ -16,17 +18,31 @@ namespace Dream.frame {
 
         }
 
-        protected beforeShow(){}
+        protected beforeShow() {}
 
-        protected afterHidden(){}
+        protected afterHide() {}
 
         protected get openAniClass(): common.IClass<BaseUIAnimation> {
             return BaseUIAnimation;
         }
 
         // get layer(): UILayer.ui|UILayer.uiPop{
-        get layer(): UILayer{
+        get layer(): UILayer {
             return UILayer.ui;
+        }
+
+        get modelPrepare(): Promise<any>[] {
+            let modelList = this._modelList;
+            if(modelList){
+                let out: Promise<any>[] = [];
+                for (let i = modelList.length - 1; i >= 0; --i) {
+                    let model = this.getModel(modelList[i]);
+                    out.push(model.prepare());
+                }
+                return out;
+            }else{
+                return null;
+            }
         }
     }
 

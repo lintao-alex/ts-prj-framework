@@ -2,10 +2,9 @@
  * Created by lintao_alex on 2017/9/19.
  */
 namespace Dream.frame {
-    //todo object pool
     export interface INetResolve<T> {
-        response: T;
-        param: IRequestParam;
+        readonly response: T;
+        readonly param: IRequestParam;
     }
 
     /**

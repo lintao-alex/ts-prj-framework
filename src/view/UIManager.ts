@@ -29,7 +29,7 @@ namespace Dream.frame {
         }
 
         initObserver(observer: IObserver) {
-            observer.care<UIAction>(UIAction.OPEN, this.doOpen, this);
+            observer.care(UIAction.OPEN, this.doOpen, this);
         }
 
         private doOpen(msg: Message<UIAction>) {
@@ -45,8 +45,16 @@ namespace Dream.frame {
             let layerEnum = uiObj.layer;
             //todo pop or ui
             let parent = root.getChildAt(layerEnum) as GComponent;
-            parent.addChild(uiObj.view);
-            uiObj.open();
+            let modelPrepare = uiObj.modelPrepare;
+            if(modelPrepare){
+                Promise.all(modelPrepare).then(()=>{
+                    parent.addChild(uiObj.view);
+                    uiObj.open();
+                })
+            }else{
+                parent.addChild(uiObj.view);
+                uiObj.open();
+            }
         }
 
         private get gRoot(){

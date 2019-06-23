@@ -3,7 +3,7 @@
  * @internal
  */
 namespace Dream.frame.$internal {
-    export class ModelCenter {
+    export class ModelCenter extends ProxyObserver {
         private _modelMap = new Map<IModelClass, BaseModel>();
 
         getModel<T extends BaseModel>(key: new() => T): T {

@@ -21,6 +21,7 @@ namespace Dream.frame {
         private _pendingPkgList: NetCallNode<any>[];
         private _responseReader: NetResponseReader;
 
+        //todo rename to 'request'
         public sendRequest<T>(command: string, param?: IRequestParam) {
             let node: NetCallNode<T> = ObjectPool.getObj(NetCallNode);
             node.command = command;
@@ -228,7 +229,7 @@ namespace Dream.frame {
 
         protected abstract decodeCommonResponse(reader: Uint8Array): IResponseData
 
-        protected stringifyProto(response: any): string {
+        protected stringifyProto(proto: any): string {
             return '';
         }
 
