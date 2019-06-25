@@ -3,8 +3,12 @@
  */
 namespace Dream.frame {
     export class BaseGetData<T> implements IGetData<T> {
-        describe: Dream.frame.IDataDescribe<T>;
+        describe: IDataDescribe<T>;
         onlyOne: boolean;
         result: Array<T>;
+
+        constructor(describe: IDataDescribe<T>){
+            this.describe = describe;
+        }
     }
 }

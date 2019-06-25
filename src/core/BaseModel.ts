@@ -18,7 +18,6 @@ namespace Dream.frame {
                 let out = this.refresh();
                 await out;
                 this._hasPrepared = true;
-                this.initDataObserver();
                 return out;
             }
         };
@@ -29,8 +28,6 @@ namespace Dream.frame {
          * 可重复调用的数据更新
          */
         abstract refresh(): Promise<any>;
-
-        protected initDataObserver() {}
 
         dispose(): void {}
 
@@ -47,8 +44,15 @@ namespace Dream.frame {
             }
         }
 
+        protected bindDataGet<T>(dataClass: common.IClass<T>, dataList: T[]) {
+            //todo
+            this.careData(dataClass, (msg) => {
+                this.getDate(msg.data, dataList);
+            })
+        }
+        protected removeDateGet(){}
 
-        protected careData<U, T extends IGetData<U>>(dataClass: common.IClass<U>, dealCall: (msg: Message<IGetData<U>>) => void) {
+        protected careData<T>(dataClass: common.IClass<T>, dealCall: (msg: Message<IGetData<T>>) => void) {
             this.care(DataMessage.GET, dealCall, this, data => data.describe.dataClass == dataClass);
         }
 

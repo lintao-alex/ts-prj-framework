@@ -3,5 +3,9 @@
  */
 namespace Dream.frame {
     export class BaseData{
+
+        watch(){
+
+        }
     }
 }
