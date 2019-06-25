@@ -35,7 +35,7 @@ namespace Dream.frame {
             return out;
         }
 
-        public registerPush<T extends IPushData>(command: string, callFuc: (data: T) => void, callObj: any) {
+        public registerPush(command: string, callFuc: (data: IPushData) => void, callObj: any) {
             let callList = this._pushCallMap.get(command);
             if (!callList) {
                 callList = [];
@@ -50,7 +50,7 @@ namespace Dream.frame {
                     }
                 }
             }
-            let newNode = ObjectPool.getObj(BackCall);
+            let newNode = ObjectPool.getObj(BackCall) as BackCall<any>;
             newNode.reset(callFuc, callObj);
             callList.push(newNode);
         }

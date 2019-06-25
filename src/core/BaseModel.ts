@@ -6,13 +6,20 @@
 namespace Dream.frame {
     export abstract class BaseModel extends ProxyObserver implements common.IDispose {
         private _hasPrepared = false;
+        private _dataGetActionList = new Array<(msg: Message<any>)=>void>();
+
+        /**
+         * 可重复调用的数据更新
+         */
+        abstract refresh(): Promise<any>;
+        protected onPrepare() {}
 
         /**
          * 准备必要数据
          */
         async prepare(): Promise<any> {
             if (this._hasPrepared) {
-                return this.fulfiled;
+                return this.fulfilled;
             } else {
                 this.onPrepare();
                 let out = this.refresh();
@@ -22,16 +29,8 @@ namespace Dream.frame {
             }
         };
 
-        protected onPrepare() {}
 
-        /**
-         * 可重复调用的数据更新
-         */
-        abstract refresh(): Promise<any>;
-
-        dispose(): void {}
-
-        getDate<T>(container: Dream.frame.IGetData<T>, list: Array<T>) {
+        getDate(container: Dream.frame.IGetData<any>, list: Array<any>) {
             let describe = container.describe;
             if (describe.check) {
                 if (container.onlyOne) {
@@ -44,24 +43,32 @@ namespace Dream.frame {
             }
         }
 
-        protected bindDataGet<T>(dataClass: common.IClass<T>, dataList: T[]) {
-            //todo
-            this.careData(dataClass, (msg) => {
-                this.getDate(msg.data, dataList);
-            })
+        protected careDataGet(voClass: common.IClass<BaseVO>, dataList: BaseVO[]) {
+            let dealCall = this.createDataGetDealCall(dataList);
+            this._dataGetActionList.push(dealCall);
+            this.care(DataMessage.GET, dealCall, this, DataUtils.getDataFilter(voClass));
         }
-        protected removeDateGet(){}
+        private createDataGetDealCall(dataList: BaseVO[]){
+            return (msg:Message<any>) => this.getDate(msg.data, dataList);
+        }
 
-        protected careData<T>(dataClass: common.IClass<T>, dealCall: (msg: Message<IGetData<T>>) => void) {
-            this.care(DataMessage.GET, dealCall, this, data => data.describe.dataClass == dataClass);
-        }
 
         protected getServer<T extends BaseServer>(key: new() => T): T {
             return $internal.ServerCenter.Ins.getServer(key);
         }
 
-        protected get fulfiled() {
+        protected get fulfilled() {
             return fulfilledPromise;
+        }
+
+        dispose(): void {
+            let actList = this._dataGetActionList;
+            for(let i = actList.length - 1; i >= 0; i--){
+                let act = actList[i];
+                this.abandon(DataMessage.GET, act, this);
+            }
+            actList.length = 0;
+            this._dataGetActionList = null;
         }
     }
 

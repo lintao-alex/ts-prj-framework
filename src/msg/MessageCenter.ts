@@ -81,7 +81,7 @@ namespace Dream.frame {
         sendMessage(msgName: string, data: any) {
             let reactList = this._reactionMap.get(msgName);
             if (reactList) {
-                let msg = ObjectPool.getObj(Message);
+                let msg = ObjectPool.getObj(Message) as Message<any>;
                 msg.data = data;
                 msg.name = msgName;
                 //发送引起的回调中可能引起列表的变化，所以生成一个副本来处理。这里不使用concat，因为copyList的length可能会比reactList小
@@ -124,8 +124,8 @@ namespace Dream.frame {
             return oldOne.action == action && oldOne.thisObj == thisObj;
         }
 
-        private getReaction<T>(action: (msg: Message<T>) => void, thisObj: any, dataJudge: (data: T) => boolean, once: boolean, pripority: number) {
-            let out = ObjectPool.getObj(Reaction);
+        private getReaction(action: (msg: Message<any>) => void, thisObj: any, dataJudge: (data: any) => boolean, once: boolean, pripority: number): Reaction<any> {
+            let out = ObjectPool.getObj(Reaction) as Reaction<any>;
             out.reset();
             out.action = action;
             out.thisObj = thisObj;

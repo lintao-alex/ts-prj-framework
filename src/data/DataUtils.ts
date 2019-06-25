@@ -14,7 +14,7 @@ namespace Dream.frame {
             return <any>out;
         }
 
-        static createGetDataFilter(dataClass: any){
+        private static createGetDataFilter(dataClass: any){
             return (get: IGetData<any>) => get.describe.dataClass == dataClass;
         }
     }
