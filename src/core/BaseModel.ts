@@ -4,15 +4,24 @@
  */
 
 namespace Dream.frame {
-    export abstract class BaseModel extends ProxyObserver implements common.IDispose {
+    import IClass = Dream.common.IClass;
+    import IDispose = Dream.common.IDispose;
+
+    type DataClass = BaseVO<any>;
+    export abstract class BaseModel extends ProxyObserver implements IDispose {
         private _hasPrepared = false;
-        private _dataGetActionList = new Array<(msg: Message<any>)=>void>();
+        private _proxyDataMap: Map<IClass<DataClass>, DataClass[]>;
+        //用于销毁时做清理
+        private _offerdataClassList: IClass<DataClass>[];
 
         /**
          * 可重复调用的数据更新
          */
         abstract refresh(): Promise<any>;
-        protected onPrepare() {}
+
+        // protected onPrepare() {}
+
+        protected abstract initDataOffer();
 
         /**
          * 准备必要数据
@@ -21,7 +30,8 @@ namespace Dream.frame {
             if (this._hasPrepared) {
                 return this.fulfilled;
             } else {
-                this.onPrepare();
+                this.initDataOffer();
+                // this.onPrepare();
                 let out = this.refresh();
                 await out;
                 this._hasPrepared = true;
@@ -29,29 +39,40 @@ namespace Dream.frame {
             }
         };
 
+        $proxyDataMap(value: Map<IClass<DataClass>, DataClass[]>) {
+            this._proxyDataMap = value;
+            this._offerdataClassList = [];
+        }
 
-        getDate(container: Dream.frame.IGetData<any>, list: Array<any>) {
-            let describe = container.describe;
-            if (describe.check) {
-                if (container.onlyOne) {
-                    container.result = [Dream.common.ArrayUtils.find(list, describe.check, describe.thisObj)];
-                } else {
-                    container.result = list.filter(describe.check, describe.thisObj);
-                }
+        /**
+         * @final
+         * @param data
+         */
+        protected offerData(data: DataClass | Array<DataClass>) {
+            let dataClass: IClass<DataClass>;
+            let dataList: DataClass[];
+            if (Array.isArray(data)) {
+                dataClass = <any>data[0].constructor;
+                dataList = data;
             } else {
-                container.result = list;
+                dataClass = <any>data.constructor;
+                dataList = [data];
             }
+            this._proxyDataMap.set(dataClass, dataList);
+            this._offerdataClassList.push(dataClass);
         }
 
-        protected careDataGet(voClass: common.IClass<BaseVO>, dataList: BaseVO[]) {
-            let dealCall = this.createDataGetDealCall(dataList);
-            this._dataGetActionList.push(dealCall);
-            this.care(DataMessage.GET, dealCall, this, DataUtils.getDataFilter(voClass));
-        }
-        private createDataGetDealCall(dataList: BaseVO[]){
-            return (msg:Message<any>) => this.getDate(msg.data, dataList);
+        /**
+         * @final
+         * @param data
+         */
+        protected revokeData(dataClass: IClass<DataClass>) {
+            this._proxyDataMap.delete(dataClass);
         }
 
+        protected getData<T extends DataClass>(dataClass: IClass<T>): T[] {
+            return <any>this._proxyDataMap.get(dataClass);
+        }
 
         protected getServer<T extends BaseServer>(key: new() => T): T {
             return $internal.ServerCenter.Ins.getServer(key);
@@ -62,13 +83,17 @@ namespace Dream.frame {
         }
 
         dispose(): void {
-            let actList = this._dataGetActionList;
-            for(let i = actList.length - 1; i >= 0; i--){
-                let act = actList[i];
-                this.abandon(DataMessage.GET, act, this);
+            let dataMap = this._proxyDataMap;
+            let list = this._offerdataClassList;
+            for (let i = list.length - 1; i >= 0; --i) {
+                let dataClass = list[i];
+                let dataList = dataMap.get(dataClass);
+                dataMap.delete(dataClass);
+                for (let i = dataList.length - 1; i >= 0; --i) {
+                    dataList[i].dispose();
+                }
             }
-            actList.length = 0;
-            this._dataGetActionList = null;
+            this._proxyDataMap = undefined;
         }
     }
 

@@ -49,11 +49,11 @@ namespace Dream.frame {
             if(modelPrepare){
                 Promise.all(modelPrepare).then(()=>{
                     parent.addChild(uiObj.view);
-                    uiObj.open();
+                    uiObj.show();
                 })
             }else{
                 parent.addChild(uiObj.view);
-                uiObj.open();
+                uiObj.show();
             }
         }
 
