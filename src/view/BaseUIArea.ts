@@ -58,6 +58,7 @@ namespace Dream.frame {
                 }
             }
         }
+        //todo: remove data watch on close
 
         protected bindDataView<T extends BaseVO<any>>(render: (data: T) => void, dataClass: IClass<T>, onlyOne = false, dataFilter?: IDataCondition<T>) {
             let getData = this.createGetData(dataClass, onlyOne, dataFilter);

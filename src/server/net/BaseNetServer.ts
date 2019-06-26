@@ -154,7 +154,7 @@ namespace Dream.frame {
                     let callList = this._pushCallMap.get(receiveCommand);
                     if (callList) {
                         for (let i = callList.length - 1; i >= 0; i--) {
-                            callList[i].invoke()
+                            callList[i].invoke(responseObj)
                         }
                     }
                 } else {

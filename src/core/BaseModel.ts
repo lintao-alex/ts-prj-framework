@@ -12,7 +12,7 @@ namespace Dream.frame {
         private _hasPrepared = false;
         private _proxyDataMap: Map<IClass<DataClass>, DataClass[]>;
         //用于销毁时做清理
-        private _offerdataClassList: IClass<DataClass>[];
+        private _offerDataClassList: IClass<DataClass>[];
 
         /**
          * 可重复调用的数据更新
@@ -22,6 +22,8 @@ namespace Dream.frame {
         // protected onPrepare() {}
 
         protected abstract initDataOffer();
+        protected abstract initNetRequest();
+        protected initNetPush(){};
 
         /**
          * 准备必要数据
@@ -31,6 +33,8 @@ namespace Dream.frame {
                 return this.fulfilled;
             } else {
                 this.initDataOffer();
+                this.initNetRequest();
+                this.initNetPush();
                 // this.onPrepare();
                 let out = this.refresh();
                 await out;
@@ -41,7 +45,7 @@ namespace Dream.frame {
 
         $proxyDataMap(value: Map<IClass<DataClass>, DataClass[]>) {
             this._proxyDataMap = value;
-            this._offerdataClassList = [];
+            this._offerDataClassList = [];
         }
 
         /**
@@ -59,7 +63,7 @@ namespace Dream.frame {
                 dataList = [data];
             }
             this._proxyDataMap.set(dataClass, dataList);
-            this._offerdataClassList.push(dataClass);
+            this._offerDataClassList.push(dataClass);
         }
 
         /**
@@ -84,7 +88,7 @@ namespace Dream.frame {
 
         dispose(): void {
             let dataMap = this._proxyDataMap;
-            let list = this._offerdataClassList;
+            let list = this._offerDataClassList;
             for (let i = list.length - 1; i >= 0; --i) {
                 let dataClass = list[i];
                 let dataList = dataMap.get(dataClass);
