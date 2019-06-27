@@ -8,6 +8,7 @@ namespace Dream.frame {
     import IDispose = Dream.common.IDispose;
 
     type DataClass = BaseVO<any>;
+
     export abstract class BaseModel extends ProxyObserver implements IDispose {
         private _hasPrepared = false;
         private _proxyDataMap: Map<IClass<DataClass>, DataClass[]>;
@@ -22,8 +23,10 @@ namespace Dream.frame {
         // protected onPrepare() {}
 
         protected abstract initDataOffer();
+
         protected abstract initNetRequest();
-        protected initNetPush(){};
+
+        protected initNetPush() {};
 
         /**
          * 准备必要数据
@@ -84,6 +87,10 @@ namespace Dream.frame {
 
         protected get fulfilled() {
             return fulfilledPromise;
+        }
+
+        protected abandonByMsgName(msgName: string) {
+            $internal.getMsg().abandonByMsgName(msgName);
         }
 
         dispose(): void {
